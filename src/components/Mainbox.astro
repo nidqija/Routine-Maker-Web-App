@@ -1,0 +1,44 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+
+const username = Astro.cookies.get("session_username")?.value;
+export const prerender = false;
+
+let message = "";
+
+if(username) {
+  message = "Would you like to get started on your study plan?";
+} else {
+  message = "Log in so we can track your productivity patterns!";
+}
+
+---
+
+<Layout>
+  <div class="flex flex-col items-center justify-center min-h-screen ">
+    <h2 style="font-family: Hanken Grotesk; font-size: 40px;" class="text-center text-white">
+      Welcome {username || "Unknown Traveller"}!
+    </h2>
+     <p style="font-family: Hanken Grotesk; font-size: 20px;" class="text-center text-white mb-5">
+      {message}
+     </p>
+    <div class="bg-white min-h-[30px] w-1/2 p-4 shadow rounded">
+      <h1 style="font-size: 20px;" class="text-center">
+        Let us know when you are ready!
+      </h1>
+      <div class="flex justify-center space-x-3">
+        <button type="button" style="background-color: indigo;" class="transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-3">
+          Start
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="module">
+     const MessageReminder = document.getElementById("messageReminder");
+     
+
+  </script>
+</Layout>

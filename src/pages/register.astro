@@ -1,0 +1,80 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+---
+
+<Layout title="register">
+  <Navbar />
+
+  <div style="min-height: 70vh; background-color: purple;">
+    <div class="flex flex-col items-center justify-center min-h-screen">
+      <h1 style="font-size: 30px; font-family: Hanken Grotesk;" class="text-white mb-5">Register Name</h1>
+      <div class="bg-white min-h-[50px] w-1/2 p-4 shadow rounded">
+        <div class="container">
+          <form id="registerForm" class="max-w-sm mx-auto">
+            <div class="mb-5">
+              <label for="username" class="block mb-2 text-sm font-medium text-gray-900">Your username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                placeholder="sussybaka"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            >
+              Submit
+            </button>
+          </form>
+          <div id="responseMessage" class="mt-4 text-center text-white"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+
+
+    const form = document.getElementById("registerForm");
+    const responseMessage = document.getElementById("responseMessage");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      console.log("Submitting username:", username); // 🔍 Debug log to confirm value
+
+      try {
+        const res = await fetch("api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username }),
+        });
+
+        const data = await res.json();
+        console.log("Response data:", data); 
+
+        if (res.ok) {
+          responseMessage.textContent = "Username registered successfully!";
+          responseMessage.style.color = "green";
+          window.location.href ="/";
+        } else {
+          responseMessage.textContent = data.error || "Error registering username.";
+          responseMessage.style.color = "red";
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        responseMessage.textContent = "Server error. Please try again.";
+        responseMessage.style.color = "red";
+      } 
+    });
+  </script>
+</Layout>

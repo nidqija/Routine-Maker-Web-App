@@ -1,0 +1,73 @@
+---
+import "../styles/global.css";
+
+const username = Astro.cookies.get("session_username")?.value;
+export const prerender = false;
+
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=League+Spartan:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+
+
+
+<div>
+    
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <div class="flex items-center">
+        <!-- Logo -->
+        <a href="/" class="text-2xl font-bold text-indigo-600" style="font-family: Hanken Grotesk;">SelfIndulgence</a>
+      </div>
+      <div class="hidden md:flex space-x-4 items-center">
+        <!-- Desktop Links -->
+        <a href="/" style="font-family: hanken grotesk;" class=" p-3 text-gray-700 hover:text-indigo-600">Home</a>
+        <a href="/about" style="font-family: Hanken Grotesk; " class=" p-3 text-gray-700 hover:text-indigo-600">Organise</a>
+        {username?(
+         <button class="btn p-3" style="background-color: indigo;border-radius: 15px;color:white">{username}</button>
+        ):(
+         <a href="/login" style="font-family: Hanken Grotesk; " class=" p-3 text-gray-700 hover:text-indigo-600">Login</a>
+         <a href="/register" style="font-family: Hanken Grotesk; " class=" p-3 text-gray-700 hover:text-indigo-600">Register</a>
+      
+        )}
+      
+
+      
+      </div>
+      <!-- Mobile menu button -->
+      <div class="md:hidden flex items-center">
+        <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu (hidden by default, needs JS to toggle) -->
+  <div id="mobile-menu" class="hidden md:hidden px-4 pb-4">
+    <a href="/" class="block py-2 text-gray-700 hover:text-indigo-600">Home</a>
+    <a href="/about" class="block py-2 text-gray-700 hover:text-indigo-600">Organise</a>
+    <a href="/login" style="font-family: Hanken Grotesk; " class=" block py-2 text-gray-700 hover:text-indigo-600">Login</a>
+    <a href="/signup" style="font-family: Hanken Grotesk; " class=" block py-2 text-gray-700 hover:text-indigo-600">Sign Up</a>
+
+
+  </div>
+
+  <script>
+    // Simple toggle for mobile menu
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('mobile-menu-button');
+      const menu = document.getElementById('mobile-menu');
+      btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden');
+      });
+    });
+  </script>
+</nav>
+</div>
