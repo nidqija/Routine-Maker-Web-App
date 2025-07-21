@@ -1,42 +1,57 @@
-
 ---
-import Layout from "../layouts/Layout.astro"
-import Navbar from "../components/Navbar.astro"
-import "../styles/global.css"
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import "../styles/global.css";
+
 export const prerender = false;
-
 ---
 
-
-<Layout  title="recordtime">
-<Navbar/>
-    <div style="min-height: 70vh;background-color: purple ;">
-
-    <div class="flex flex-col items-center justify-center min-h-screen ">
-       <h1 style="font-size: 30px; color:white" class="text-center mb-5">
+<Layout title="recordtime">
+  <Navbar />
+  <div style="min-height: 70vh; background-color: purple;">
+    <div class="flex flex-col items-center justify-center min-h-screen">
+      <h1 style="font-size: 30px; color: white;" class="text-center mb-5">
         State your time estimation for your study hour!
       </h1>
-    <h2 style="font-family: Hanken Grotesk; font-size: 40px;" class="text-center text-white">
-    </h2>
-    
-    <div class="bg-white min-h-[30px] w-1/2 p-4 shadow rounded">
-     
 
-<form class="max-w-sm mx-auto">
-  <div class="mb-5">
-    <label for="text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-dark">Start Time</label>
-    <input type="time" id="startTime" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="10 am" required />
-  </div>
-  <div class="mb-5">
-    <label for="text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-dark">End Time</label>
-    <input type="time" id="endTime" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="12 pm" required />
-  </div>
- 
-  <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-</form>
+      <div class="bg-white min-h-[30px] w-1/2 p-4 shadow rounded">
+        <div class="mb-5">
+          <label for="startTime" class="block mb-2 text-sm font-medium text-gray-900 dark:text-dark">Start Time</label>
+          <input type="time" id="startTime" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+        </div>
 
+        <div class="mb-5">
+          <label for="endTime" class="block mb-2 text-sm font-medium text-gray-900 dark:text-dark">End Time</label>
+          <input type="time" id="endTime" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+        </div>
+
+        <button type="submit" id="submitBtn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+
+        <pre id="planOutput" class="mt-4 bg-gray-100 p-4 rounded"></pre>
+      </div>
     </div>
   </div>
-</div>
 
+  <script type="module">
+    async function generatePlan(event) {
+      event.preventDefault();
+
+      const start = document.getElementById("startTime").value;
+      const end = document.getElementById("endTime").value;
+
+      const prompt = `Generate an effective study plan starting at ${start} and ending at ${end}. Include study intervals and break suggestions to maximize focus.`;
+   
+      const res = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+
+      const data = await res.json();
+      document.getElementById("planOutput").innerText = data.result || data.error;
+    }
+
+    // Attach event listener instead of inline onclick
+    document.getElementById("submitBtn").addEventListener("click", generatePlan);
+  </script>
 </Layout>
