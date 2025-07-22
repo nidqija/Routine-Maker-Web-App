@@ -28,6 +28,7 @@ export const prerender = false;
         <button type="submit" id="submitBtn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
 
         <pre id="planOutput" class="mt-4 bg-gray-100 p-4 rounded"></pre>
+        <button id="buttonStart" style="background-color: blue;"></button>
       </div>
     </div>
   </div>
@@ -39,7 +40,7 @@ export const prerender = false;
       const start = document.getElementById("startTime").value;
       const end = document.getElementById("endTime").value;
 
-      const prompt = `Generate an effective study plan starting at ${start} and ending at ${end}. Include study intervals and break suggestions to maximize focus.`;
+      const prompt = `Generate an effective study plan starting at ${start} and ending at ${end}. Include study intervals and break suggestions to maximize focus. Split it in between numbers and make as simple as possible ( example : 1. (time) : (session name))`;
    
       const res = await fetch('/api/gemini', {
         method: 'POST',
@@ -49,6 +50,7 @@ export const prerender = false;
 
       const data = await res.json();
       document.getElementById("planOutput").innerText = data.result || data.error;
+      document.getElementById("buttonStart").innerText = "Start";
     }
 
     // Attach event listener instead of inline onclick
