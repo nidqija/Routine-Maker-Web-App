@@ -27,33 +27,73 @@ export const prerender = false;
 
         <button type="submit" id="submitBtn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
 
-        <pre id="planOutput" class="mt-4 bg-gray-100 p-4 rounded"></pre>
-        <button id="buttonStart" style="background-color: blue;"></button>
+        <div id="planOutput" class="mt-4 bg-gray-100 p-4 rounded"></div>
+        <button type="submit" id="buttonStart" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"></button>
       </div>
     </div>
   </div>
 
-  <script type="module">
-    async function generatePlan(event) {
-      event.preventDefault();
+ <script type="module">
+  async function generatePlan(event) {
+    event.preventDefault();
 
-      const start = document.getElementById("startTime").value;
-      const end = document.getElementById("endTime").value;
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
 
-      const prompt = `Generate an effective study plan starting at ${start} and ending at ${end}. Include study intervals and break suggestions to maximize focus. Split it in between numbers and make as simple as possible ( example : 1. (time) : (session name))`;
-   
-      const res = await fetch('/api/gemini', {
+    const prompt = `Generate an effective study plan starting at ${start} and ending at ${end}. Include study intervals and break suggestions to maximize focus. Split it in between numbers and make as simple as possible ( example : 1. (time) : (session name)) . Just list out the number order only , no need for "great! ill create ..." sentence`;
+
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await res.json();
+    const output = data.result || data.error;
+
+    const items = output.split(/\d+\.\s*/).filter(item => item.trim() !== "");
+
+    const cardsHTML = items.map((item, index) => `
+      <div class="bg-white rounded-xl shadow p-4 mb-4">
+        <h3 class="font-semibold text-gray-800 mb-2">Step ${index + 1}</h3>
+        <p class="text-gray-700">${item.trim()}</p>
+      </div>
+    `).join('');
+
+    document.getElementById("planOutput").innerHTML = cardsHTML;
+    document.getElementById("buttonStart").innerText = "Start";
+
+    // 🔧 Save to database AFTER generating and rendering
+    const itemsToSave = items.map((item, index) => ({
+      stepNumber: index + 1,
+      description: item.trim()
+    }));
+
+    const username = "test_user"; // 🔧 Replace with actual username logic
+
+    try {
+      const saveRes = await fetch('/api/savePlan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({ username, items: itemsToSave })
       });
 
-      const data = await res.json();
-      document.getElementById("planOutput").innerText = data.result || data.error;
-      document.getElementById("buttonStart").innerText = "Start";
-    }
+      const text = await saveRes.text();
 
-    // Attach event listener instead of inline onclick
-    document.getElementById("submitBtn").addEventListener("click", generatePlan);
-  </script>
+      try {
+        const saveData = JSON.parse(text);
+        console.log("saved items", saveData);
+      } catch (parseError) {
+        console.error("Failed to parse JSON. Response text:", text);
+      }
+
+    } catch (error) {
+      console.log("error saving planned items", error);
+    }
+  }
+
+  // Attach event listener
+  document.getElementById("submitBtn").addEventListener("click", generatePlan);
+</script>
+
 </Layout>

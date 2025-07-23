@@ -45,7 +45,7 @@ const headers = new Headers();
       path : "/",
       maxAge : 60 * 60 * 24,
       sameSite : "lax",
-      secure: import.meta.env.NODE_ENV === "production",
+      secure: import.meta.env.PROD,
     })
   );
 
