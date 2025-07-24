@@ -26,9 +26,12 @@ export const prerender = false;
         </div>
 
         <button type="submit" id="submitBtn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
-
-        <div id="planOutput" class="mt-4 bg-gray-100 p-4 rounded"></div>
-        <button type="submit" id="buttonStart" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"></button>
+        <div  class="mt-4 bg-gray-100 p-4 rounded" >
+        <div id="yourPlanner" class="mb-5"></div>
+        <div id="planOutput" ></div>
+        </div>
+   
+        <a href="/startstudy"><button type="submit"  id="buttonStart" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"></button></a>
       </div>
     </div>
   </div>
@@ -61,6 +64,7 @@ export const prerender = false;
     `).join('');
 
     document.getElementById("planOutput").innerHTML = cardsHTML;
+    document.getElementById("yourPlanner").innerText = "Your planner :";
     document.getElementById("buttonStart").innerText = "Start";
 
     // 🔧 Save to database AFTER generating and rendering

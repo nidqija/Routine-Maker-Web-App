@@ -1,0 +1,109 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+---
+
+<Layout title="startstudy">
+  <Navbar/>
+  <div class="bg-purple-700 py-8">
+    <div class="flex justify-center">
+      <div class="grid grid-cols-2 gap-10">
+        <!-- Card 1 -->
+        <div class="flex flex-col items-center justify-center min-h-screen">
+          <div class="bg-white min-h-[30px] w-64 p-5 m-5 shadow rounded">
+            <div class="flex justify-center">
+              <a href="#" class="text-dark">time</a>
+            </div>
+            <h1 id="clock" style="font-size: 20px;" class="text-center">
+             
+             Start Timer 
+            </h1>
+            <div class="flex justify-center space-x-3">
+           
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="flex flex-col items-center justify-center min-h-screen">
+          <div style="border-color: transparent;" class="min-h-[30px] w-64  p-5 m-5 shadow rounded">
+
+              
+            <div id="planStudy" class="flex flex-col items-center space-y-3">
+             
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+ <script type="module">
+
+
+
+  const clock = document.getElementById("clock");
+
+  function updateClock(){
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2 , '0');
+    const minutes = String(now.getMinutes()).padStart(2 , '0');
+    const seconds = String(now.getSeconds()).padStart(2 , '0');
+
+    clock.innerText = `${hours}:${minutes}:${seconds}`;
+  }
+
+  updateClock();
+  setInterval(updateClock , 1000);
+
+
+  (async () => {
+    const planStudy = document.getElementById("planStudy");
+
+    try {
+      const res = await fetch("/api/fetchschedule", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.studyPlans) {
+        const plans = data.studyPlans;
+
+        if (plans.length === 0) {
+          planStudy.innerText = "No study plan found!";
+        } else {
+          planStudy.innerText = "";
+
+
+          plans.forEach(plan => {
+            const card = document.createElement("div");
+            card.className = "bg-gray-100 w-full p-3 rounded shadow text-center";
+            const desc = document.createElement("p");
+            desc.style.fontFamily = "Hanken Grotesk";
+            desc.style.fontSize = '20px';
+            desc.className = "text-sm text-gray-800";
+            desc.innerText = plan.plan_description || "No description";
+
+            card.appendChild(desc);
+
+            planStudy.appendChild(card);
+          });
+
+        }
+      } else {
+        planStudy.innerText = data.error || "Error fetching study plan";
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+      planStudy.innerText = "Internal Client Error";
+    }
+  })();
+</script>
+
+
+</Layout>
