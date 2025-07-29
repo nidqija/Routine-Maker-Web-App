@@ -10,7 +10,7 @@ export const turso = createClient({
 });
 
 export const POST: APIRoute = async ({ request }) => {
-  const { items } = await request.json();
+  const { items , date} = await request.json();
   const cookies = cookie.parse(request.headers.get("cookie") || "");
   const username = cookies.session_username;
   
@@ -32,22 +32,25 @@ export const POST: APIRoute = async ({ request }) => {
 
     const userID = userResult.rows[0].user_id;
     const planID = String(crypto.randomUUID());
+    
 
     // 🔧 Insert each plan item
     for (const item of items) {
       console.log("Inserting item:", {
         planID,
         stepNumber: item.stepNumber,
-        description: item.description
+        description: item.description,
+        date
       });
 
       await turso.execute(
-        "INSERT INTO Study_Plan (plan_id, user_id, plan_step, plan_description) VALUES (?, ?, ?, ?)",
+        "INSERT INTO Study_Plan (plan_id, user_id, plan_step, plan_description , study_date) VALUES (?, ?, ?, ? ,?)",
         [
           planID,
           userID,
           Number(item.stepNumber),
-          String(item.description)
+          String(item.description),
+          date
         ]
       );
     }
