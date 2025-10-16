@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/node": "^9.3.0",
+    "@astrojs/vercel": "^8.2.10",
     "@google/generative-ai": "^0.24.1",
     "@libsql/client": "^0.15.10",
     "@tailwindcss/vite": "^4.1.11",
